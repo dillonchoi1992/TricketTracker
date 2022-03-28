@@ -49,12 +49,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="TicketPrioority" class="control-label"></label>
-                <select asp-for="TicketPrioority" class="form-control"></select>
+                <select asp-for="TicketPrioority" class ="form-control" asp-items="ViewBag.Priority"></select>
                 <span asp-validation-for="TicketPrioority" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="TicketStatus" class="control-label"></label>
-                <select asp-for="TicketStatus" class="form-control"></select>
+                <select asp-for="TicketStatus" class ="form-control" asp-items="ViewBag.Status"></select>
                 <span asp-validation-for="TicketStatus" class="text-danger"></span>
             </div>
             <div class="form-group">

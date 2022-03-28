@@ -23,6 +23,14 @@ namespace TicketTracker.Controllers
         {
             return View();
         }
+        public IActionResult SimpleDataPage()
+        {
+            var s = new List<string>();
+            s.Add("this is my data");
+            s.Add("this is some more data");
+            ViewData["myCustomKey"] = "This is my data";
+            return View(s);
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

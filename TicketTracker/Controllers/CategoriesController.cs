@@ -11,23 +11,22 @@ using TicketTrackerModel;
 
 namespace TicketTracker.Controllers
 {
-    public class TicketsController : Controller
+    public class CategoriesController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public TicketsController(ApplicationDbContext context)
+        public CategoriesController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Tickets
+        // GET: Categories
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Tickets.Include(t => t.Category);
-            return View(await applicationDbContext.ToListAsync());
+            return View(await _context.Categories.ToListAsync());
         }
 
-        // GET: Tickets/Details/5
+        // GET: Categories/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -35,46 +34,39 @@ namespace TicketTracker.Controllers
                 return NotFound();
             }
 
-            var ticket = await _context.Tickets
-                .Include(t => t.Category)
+            var category = await _context.Categories
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (ticket == null)
+            if (category == null)
             {
                 return NotFound();
             }
 
-            return View(ticket);
+            return View(category);
         }
 
-        // GET: Tickets/Create
+        // GET: Categories/Create
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
-            var items = Enum.GetNames(typeof(TicketPrioority)).ToList();
-            ViewData["Priority"] = new SelectList(items);
-            var items2 = Enum.GetNames(typeof(Status)).ToList();
-            ViewData["Status"] = new SelectList(items2);
             return View();
         }
 
-        // POST: Tickets/Create
+        // POST: Categories/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Issue,Description,Resolution,CratedDate,StartedDate,DueDate,CompletedDate,TicketPrioority,TicketStatus,TicketCreatedBy,TechAssigned,HoursOfLabor,StakeHoldersEmails,CategoryId")] Ticket ticket)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,IsActive")] Category category)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(ticket);
+                _context.Add(category);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", ticket.CategoryId);
-            return View(ticket);
+            return View(category);
         }
 
-        // GET: Tickets/Edit/5
+        // GET: Categories/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -82,23 +74,22 @@ namespace TicketTracker.Controllers
                 return NotFound();
             }
 
-            var ticket = await _context.Tickets.FindAsync(id);
-            if (ticket == null)
+            var category = await _context.Categories.FindAsync(id);
+            if (category == null)
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Description", ticket.CategoryId);
-            return View(ticket);
+            return View(category);
         }
 
-        // POST: Tickets/Edit/5
+        // POST: Categories/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Issue,Description,Resolution,CratedDate,StartedDate,DueDate,CompletedDate,TicketPrioority,TicketStatus,TicketCreatedBy,TechAssigned,HoursOfLabor,StakeHoldersEmails,CategoryId")] Ticket ticket)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,IsActive")] Category category)
         {
-            if (id != ticket.Id)
+            if (id != category.Id)
             {
                 return NotFound();
             }
@@ -107,12 +98,12 @@ namespace TicketTracker.Controllers
             {
                 try
                 {
-                    _context.Update(ticket);
+                    _context.Update(category);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TicketExists(ticket.Id))
+                    if (!CategoryExists(category.Id))
                     {
                         return NotFound();
                     }
@@ -123,11 +114,10 @@ namespace TicketTracker.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Description", ticket.CategoryId);
-            return View(ticket);
+            return View(category);
         }
 
-        // GET: Tickets/Delete/5
+        // GET: Categories/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -135,31 +125,30 @@ namespace TicketTracker.Controllers
                 return NotFound();
             }
 
-            var ticket = await _context.Tickets
-                .Include(t => t.Category)
+            var category = await _context.Categories
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (ticket == null)
+            if (category == null)
             {
                 return NotFound();
             }
 
-            return View(ticket);
+            return View(category);
         }
 
-        // POST: Tickets/Delete/5
+        // POST: Categories/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var ticket = await _context.Tickets.FindAsync(id);
-            _context.Tickets.Remove(ticket);
+            var category = await _context.Categories.FindAsync(id);
+            _context.Categories.Remove(category);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool TicketExists(int id)
+        private bool CategoryExists(int id)
         {
-            return _context.Tickets.Any(e => e.Id == id);
+            return _context.Categories.Any(e => e.Id == id);
         }
     }
 }
